@@ -1,0 +1,38 @@
+# Maven output
+target/
+
+# IDE directories
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+*.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
