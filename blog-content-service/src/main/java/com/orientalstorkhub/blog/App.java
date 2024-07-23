@@ -1,4 +1,4 @@
-package com.orientalstorkhub;
+package com.orientalstorkhub.blog;
 
 /**
  * Hello world!

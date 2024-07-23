@@ -1,4 +1,4 @@
-package com.orientalstorkhub;
+package com.orientalstorkhub.blog;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
