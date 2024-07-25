@@ -1,4 +1,4 @@
-package com.orientalstorkhub.blog.contentservice;
+package com.orientalstorkhub.blog.gatewayservice;
 
 
 import org.springframework.boot.SpringApplication;
@@ -7,8 +7,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class ContentServiceApplication {
+public class GatewayServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ContentServiceApplication.class, args);
+        SpringApplication.run(GatewayServiceApplication.class, args);
     }
 }

@@ -1,0 +1,46 @@
+server:
+  port: 10000
+
+spring:
+  application:
+    name: blog-gateway-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user-auth-service
+          uri: lb://blog-user-auth-service
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+        - id: content-service
+          uri: lb://blog-content-service
+          predicates:
+            - Path=/content/**
+          filters:
+            - StripPrefix=1
+        - id: file-media-service
+          uri: lb://blog-file-media-service
+          predicates:
+            - Path=/media/**
+          filters:
+            - StripPrefix=1
+        - id: notification-messaging-service
+          uri: lb://blog-notification-messaging-service
+          predicates:
+            - Path=/notifications/**
+          filters:
+            - StripPrefix=1
+        - id: statistics-analytics-service
+          uri: lb://blog-statistics-analytics-service
+          predicates:
+            - Path=/analytics/**
+          filters:
+            - StripPrefix=1
+
