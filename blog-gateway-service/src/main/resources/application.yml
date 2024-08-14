@@ -16,13 +16,13 @@ spring:
         - id: user-auth-service
           uri: lb://blog-user-auth-service
           predicates:
-            - Path=/auth/**
+            - Path=/auth/**, /user-auth-service/v3/api-docs
           filters:
             - StripPrefix=1
         - id: content-service
           uri: lb://blog-content-service
           predicates:
-            - Path=/content/**
+            - Path=/content/**, /content-service/v3/api-docs
           filters:
             - StripPrefix=1
         - id: file-media-service
@@ -43,4 +43,25 @@ spring:
             - Path=/analytics/**
           filters:
             - StripPrefix=1
+
+knife4j:
+  gateway:
+    enabled: true
+    # 指定服务发现的模式聚合微服务文档，并且是默认`default`分组
+    strategy: discover
+    discover:
+      enabled: true
+      # 指定版本号(Swagger2|OpenAPI3)
+      version : openapi3
+      # 需要排除的微服务(eg:网关服务)
+      excluded-services:
+        - blog-gateway-service
+      service-config:
+        blog-user-auth-service:
+          order: 1
+          group-name: 用户服务
+
+        blog-content-service:
+          order: 2
+          group-name: 内容服务
 
