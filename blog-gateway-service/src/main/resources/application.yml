@@ -65,3 +65,8 @@ knife4j:
           order: 2
           group-name: 内容服务
 
+jwt:
+  secret-key: fjeiowh833f3c292s
+  access-token-expiration: 900000
+  refresh-token-expiration: 9000000  
+  refresh-threshold: 300000

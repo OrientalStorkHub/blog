@@ -1,7 +1,9 @@
 package com.orientalstorkhub.blog.userauthservice.service;
 
-import com.orientalstorkhub.blog.common.model.vo.UserRegisterVO;
-import com.orientalstorkhub.blog.common.model.vo.UserVo;
+import com.orientalstorkhub.blog.common.model.vo.user.LoginResponseVo;
+import com.orientalstorkhub.blog.common.model.vo.user.UserLoginVo;
+import com.orientalstorkhub.blog.common.model.vo.user.UserRegisterVO;
+
 
 import java.util.Optional;
 
@@ -9,5 +11,5 @@ public interface UserService {
     //用户注册
     void register(UserRegisterVO userRegisterVO);
 
-    Optional<UserVo> login(UserVo userVo);
+    Optional<LoginResponseVo> login(UserLoginVo userLoginVo);
 }

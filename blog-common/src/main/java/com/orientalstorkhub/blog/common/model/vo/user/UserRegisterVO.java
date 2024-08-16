@@ -1,4 +1,4 @@
-package com.orientalstorkhub.blog.common.model.vo;
+package com.orientalstorkhub.blog.common.model.vo.user;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

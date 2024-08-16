@@ -1,18 +1,18 @@
 package com.orientalstorkhub.blog.common.exception;
 
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.orientalstorkhub.blog.common.responses.BaseResponse;
+
+
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 //@ControllerAdvice
 @RestControllerAdvice
 //@Component
-public class GlobalExceptionHandler {
-    // TODO: 返回值正确吗？
+public class GlobalExceptionHandler  {
+    
     @ExceptionHandler(BlogBaseException.class)
     public BaseResponse<Object> handleBlogBaseException(BlogBaseException e) {
         BaseResponse<Object> response = new BaseResponse<>(e.getErrorCode(), e.getErrorMessage(), null);
@@ -26,4 +26,10 @@ public class GlobalExceptionHandler {
         System.out.printf("服务器错误: ", e);
         return new BaseResponse<>(500, "服务器错误，请联系管理员", null);
     }
+
+
+
+
+    
+
 }

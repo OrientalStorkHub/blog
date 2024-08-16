@@ -2,6 +2,8 @@ package com.orientalstorkhub.blog.common.responses;
 
 import java.io.Serializable;
 
+import com.orientalstorkhub.blog.common.constants.ErrorCode;
+
 import lombok.Data;
 
 
@@ -20,5 +22,9 @@ public class BaseResponse<T> implements Serializable {
         this.code = code;
         this.message = message;
         this.data = data;
+    }
+
+    public static <T> BaseResponse<T> error(ErrorCode errorCode) {
+        return new BaseResponse<>(errorCode.getCode(), errorCode.getDescription(), null);
     }
 }

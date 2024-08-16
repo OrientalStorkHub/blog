@@ -13,5 +13,13 @@ public enum LoginType {
         this.description = description;
     }
 
+    public int getCode(){
+        return this.code;
+    }
+
+    public String getDescription(){
+        return this.description;
+    }
+
 
 }
