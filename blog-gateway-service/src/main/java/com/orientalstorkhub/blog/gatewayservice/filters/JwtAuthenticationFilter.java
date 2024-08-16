@@ -4,16 +4,19 @@ package com.orientalstorkhub.blog.gatewayservice.filters;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.orientalstorkhub.blog.common.constants.ErrorCode;
+import com.orientalstorkhub.blog.common.constants.RedisKeyPrefix;
 import com.orientalstorkhub.blog.common.exception.BlogBaseException;
 import com.orientalstorkhub.blog.common.responses.BaseResponse;
 
@@ -50,6 +53,9 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     @Value("${jwt.refresh-threshold}")
     private long refreshThreshold;
 
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
@@ -68,6 +74,11 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         if (accessToken == null || accessToken.isEmpty()) {
             return   handleUnauthorized(exchange);
         }       
+
+        //验证access-token是否在黑名单
+        if (isTokenBlacklist(accessToken)) {
+            return handleUnauthorized(exchange);
+        }
         // 验证JWT
         if (JWTUtil.verify(accessToken, secretKey.getBytes()) && !isTokenExpired(accessToken)) {
             // 检查token是否快过期
@@ -91,6 +102,12 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             return handleUnauthorized(exchange);
         }
     }
+
+    //判断token是否在黑名单
+    private boolean isTokenBlacklist(String accessToken) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(RedisKeyPrefix.BLACKLIST.getPrefix() + accessToken));
+    }
+
     //判断路径是否在白名单中
     private boolean isWhiteList(String path) {
         for (String whitePath : WHITE_LIST) {
@@ -101,6 +118,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         return false;
     }
 
+    //判断token是否快过期
     private boolean isTokenNearExpiration(String token) {
         JWT jwt = JWTUtil.parseToken(token);
         long expirationTime = Long.parseLong(jwt.getPayload("exp").toString());
@@ -114,6 +132,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         return System.currentTimeMillis() > expirationTime;
     }
 
+
+    //刷新token
     private String[] refreshTokens(String refreshToken) {
         JWT jwt = JWTUtil.parseToken(refreshToken);
         Map<String, Object> payload = new HashMap<>(jwt.getPayloads());
@@ -143,6 +163,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         return token;
     }
 
+    //处理未授权错误
     private Mono<Void> handleUnauthorized(ServerWebExchange exchange) {
         exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
         exchange.getResponse().getHeaders().setContentType(org.springframework.http.MediaType.APPLICATION_JSON);

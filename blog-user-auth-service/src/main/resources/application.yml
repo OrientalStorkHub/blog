@@ -13,11 +13,11 @@ spring:
     username: blog_user1
     password: MySecureP@ss1
     driver-class-name: com.mysql.cj.jdbc.Driver
-#  redis:
-#    host: 127.0.0.1
-#    port: 6379
-#    password: 123456
-#    database: 0
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    database: 0
 
 jwt:
   access-token-expiration: 900000

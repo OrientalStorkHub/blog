@@ -12,4 +12,7 @@ public interface UserService {
     void register(UserRegisterVO userRegisterVO);
 
     Optional<LoginResponseVo> login(UserLoginVo userLoginVo);
+
+    //登出
+    void logout(String accessToken);
 }

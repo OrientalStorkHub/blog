@@ -1,4 +1,4 @@
-package com.orientalstorkhub.blog.userauthservice.service.ServiceImpl;
+package com.orientalstorkhub.blog.userauthservice.service.impl;
 
 
 import java.sql.Timestamp;
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-
+import cn.hutool.json.JSON;
 import cn.hutool.jwt.JWTUtil;
 import com.orientalstorkhub.blog.common.config.JwtConfig;
 import com.orientalstorkhub.blog.common.constants.LoginType;
@@ -25,6 +25,7 @@ import com.orientalstorkhub.blog.common.model.vo.user.UserRegisterVO;
 import com.orientalstorkhub.blog.common.utils.PWDUtil;
 import com.orientalstorkhub.blog.userauthservice.repository.UserMapper;
 import com.orientalstorkhub.blog.userauthservice.service.UserService;
+import com.orientalstorkhub.blog.userauthservice.service.TokenBlacklistService;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -33,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private JwtConfig jwtConfig;
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
 
 
 
@@ -78,8 +81,9 @@ public class UserServiceImpl implements UserService {
             if (existingUser.isPresent()) {
                 user = existingUser.get();
             }
-        }
+        }        
         try {
+            //验证密码
             if (user != null && PWDUtil.verifyPassword(userVo.getPassword(), user.getPassword(), user.getSalt())) {
                 // 生成accessToken和refreshToken
                 String accessToken = generateJwtToken(user.getId(), jwtConfig.getRefreshTokenExpiration());
@@ -90,8 +94,7 @@ public class UserServiceImpl implements UserService {
                 }
                 
                 long accessTokenExpireTime = System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration();
-                long refreshTokenExpireTime = System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration();
-                
+                long refreshTokenExpireTime = System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration();                
                 return Optional.of(LoginResponseVo.builder()
                         .userId(user.getId())
                         .username(user.getUsername())
@@ -109,10 +112,37 @@ public class UserServiceImpl implements UserService {
         return Optional.empty();
     }
 
+    //验证JWT token格式
     private boolean isValidJwtFormat(String token) {
         return token != null && token.split("\\.").length == 3;
     }
 
+    @Override
+    public void logout(String accessToken) {
+        // 验证令牌
+        if (!isValidJwtFormat(accessToken)) {
+            throw new BlogBaseException(ErrorCode.INVALID_TOKEN);
+        }
+
+        try {
+            // 解析令牌以获取过期时间
+            long expTime;
+            try {
+                expTime = JWTUtil.parseToken(accessToken).getPayload().getClaimsJson().getLong("exp");
+            } catch (Exception e) {
+                System.out.println(e);
+                throw new BlogBaseException(ErrorCode.INVALID_TOKEN_PARSING);
+            }
+
+            // 将令牌添加到黑名单
+            tokenBlacklistService.addToBlacklist(accessToken, expTime);
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new BlogBaseException(ErrorCode.LOGOUT_FAILED);
+        }
+    }
+
+    //生成JWT token
     private String generateJwtToken(Integer userId, long expiration) {
         long currentTime = System.currentTimeMillis();
         long expireTime = currentTime + expiration;
