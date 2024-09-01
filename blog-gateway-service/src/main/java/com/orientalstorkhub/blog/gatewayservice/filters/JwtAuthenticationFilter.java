@@ -11,13 +11,11 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.orientalstorkhub.blog.common.constants.ErrorCode;
 import com.orientalstorkhub.blog.common.constants.RedisKeyPrefix;
-import com.orientalstorkhub.blog.common.exception.BlogBaseException;
 import com.orientalstorkhub.blog.common.responses.BaseResponse;
 
 import cn.hutool.json.JSONConfig;

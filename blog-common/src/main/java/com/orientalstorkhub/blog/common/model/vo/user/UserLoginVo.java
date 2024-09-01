@@ -1,23 +1,22 @@
 package com.orientalstorkhub.blog.common.model.vo.user;
 
-import javax.validation.constraints.NotBlank;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+
 @Data
 @NoArgsConstructor 
 @AllArgsConstructor
 @Builder
+@Schema(description = "登录请求vo")
 public class UserLoginVo {
-    private String username;
-    private String email;
+    @Schema(description = "用户名/邮箱", example = "fheohueh / cjfijytkuykuykyugE8@qq.com",requiredMode = REQUIRED)
+    private String usernameOrEmail;
+    @Schema(description = "密码", example = "1245435", requiredMode = REQUIRED )
     private String password;
-    //登录模式：1 用户名登录；2 邮箱登录
-    @NotBlank(message = "登录模式不能为空")
-    private Integer mode;
-
-
 }

@@ -2,15 +2,14 @@ package com.orientalstorkhub.blog.userauthservice.service.impl;
 
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import cn.hutool.json.JSON;
 import cn.hutool.jwt.JWTUtil;
 import com.orientalstorkhub.blog.common.config.JwtConfig;
-import com.orientalstorkhub.blog.common.constants.LoginType;
-
+import com.orientalstorkhub.blog.common.model.entity.auth.User;
 import com.orientalstorkhub.blog.common.model.vo.user.LoginResponseVo;
 import com.orientalstorkhub.blog.common.model.vo.user.UserLoginVo;
 
@@ -20,12 +19,18 @@ import org.springframework.stereotype.Service;
 import com.orientalstorkhub.blog.common.constants.ErrorCode;
 import com.orientalstorkhub.blog.common.constants.UserType;
 import com.orientalstorkhub.blog.common.exception.BlogBaseException;
-import com.orientalstorkhub.blog.common.model.entity.User;
 import com.orientalstorkhub.blog.common.model.vo.user.UserRegisterVO;
 import com.orientalstorkhub.blog.common.utils.PWDUtil;
 import com.orientalstorkhub.blog.userauthservice.repository.UserMapper;
 import com.orientalstorkhub.blog.userauthservice.service.UserService;
 import com.orientalstorkhub.blog.userauthservice.service.TokenBlacklistService;
+
+/**
+ * UserServiceImpl is a service implementation class for User.
+ * 
+ * @author zhangj
+ */
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,26 +42,31 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
 
-
-
+    
     @Override
     public void register(UserRegisterVO userRegisterVO) {
-        // 验证用户名是否已存在
-        if (userMapper.selectByUsername(userRegisterVO.getUsername()).isPresent()) {
-            throw new BlogBaseException(ErrorCode.USER_ALREADY_EXISTS);
+        Optional<User> existUser = userMapper.selectByUsernameOrEmailOrNickname(userRegisterVO.getUsername(), 
+            userRegisterVO.getEmail(), userRegisterVO.getNickname());
+        if (existUser.isPresent()){
+            User user = existUser.get();
+            if (user.getUsername().equals(userRegisterVO.getUsername())){
+                throw new BlogBaseException(ErrorCode.USER_ALREADY_EXISTS);
+            }
+            if (user.getEmail().equals(userRegisterVO.getEmail())){
+                throw new BlogBaseException(ErrorCode.USER_EMAIL_ALREADY_EXISTS);
+            }
+            if (user.getNickname().equals(userRegisterVO.getNickname())){
+                throw new BlogBaseException(ErrorCode.USER_NICKNAME_EXISTS);
+            }
         }
-        //验证邮箱是否已存在
-        if (userMapper.selectByEmail(userRegisterVO.getEmail()).isPresent()) {
-            throw new BlogBaseException(ErrorCode.USER_EMAIL_ALREADY_EXISTS);
-        }
-
         String salt = PWDUtil.generateSalt();
         User user = User.builder().username(userRegisterVO.getUsername())
+                .nickname(userRegisterVO.getNickname())
                 .email(userRegisterVO.getEmail())
                 .password(PWDUtil.hashPassword(userRegisterVO.getPassword(), salt))
                 .role(UserType.NORMAL.getCode())
-                .createdAt(new Timestamp(System.currentTimeMillis()))
-                .updatedAt(new Timestamp(System.currentTimeMillis()))
+                .createdAt(Timestamp.from(Instant.now()))
+                .updatedAt(Timestamp.from(Instant.now()))
                 .salt(salt)
                 .build();
         try {
@@ -66,50 +76,45 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
+    
+ 
     @Override
     public Optional<LoginResponseVo> login(UserLoginVo userVo) {
-        User user = null;
-        if (userVo != null && userVo.getMode() != null) {
-            Optional<User> existingUser = Optional.empty();
-            if (userVo.getMode() == LoginType.USERNAME.getCode()) {
-                //用户名登录
-                existingUser = userMapper.selectByUsername(userVo.getUsername());
-            } else if (userVo.getMode() == LoginType.Email.getCode()) {
-                //邮箱登录
-                existingUser = userMapper.selectByEmail(userVo.getEmail());
-            }
-            if (existingUser.isPresent()) {
-                user = existingUser.get();
-            }
-        }        
+        Optional<User> existingUser = userMapper.selectByUsernameOrEmail(userVo.getUsernameOrEmail());
+        if (existingUser.isEmpty()) {
+            throw new BlogBaseException(ErrorCode.USER_LOGIN_USERNAME_OR_EMAIL_FAILED);
+        }
+        User user = existingUser.get();
         try {
-            //验证密码
-            if (user != null && PWDUtil.verifyPassword(userVo.getPassword(), user.getPassword(), user.getSalt())) {
-                // 生成accessToken和refreshToken
-                String accessToken = generateJwtToken(user.getId(), jwtConfig.getRefreshTokenExpiration());
-                String refreshToken = generateJwtToken(user.getId(), jwtConfig.getAccessTokenExpiration());
-                
-                if (!isValidJwtFormat(accessToken) || !isValidJwtFormat(refreshToken)) {
-                    throw new IllegalStateException("Generated JWT token is not in valid format");
-                }
-                
-                long accessTokenExpireTime = System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration();
-                long refreshTokenExpireTime = System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration();                
-                return Optional.of(LoginResponseVo.builder()
-                        .userId(user.getId())
-                        .username(user.getUsername())
-                        .expiresAt(accessTokenExpireTime)
-                        .accessToken(accessToken)
-                        .refreshToken(refreshToken)
-                        .refreshExpiresAt(refreshTokenExpireTime)
-                        .email(user.getEmail())
-                        .build());
+            // 验证密码
+            if (!PWDUtil.verifyPassword(userVo.getPassword(), user.getPassword(), user.getSalt())) {
+                return Optional.empty(); // 直接返回空
             }
+            // 生成accessToken和refreshToken
+            String accessToken = generateJwtToken(user.getId(), jwtConfig.getRefreshTokenExpiration());
+            String refreshToken = generateJwtToken(user.getId(), jwtConfig.getAccessTokenExpiration());
+            
+            if (!isValidJwtFormat(accessToken) || !isValidJwtFormat(refreshToken)) {
+                throw new IllegalStateException("Generated JWT token is not in valid format");
+            }
+
+            //处理user_session
+            
+            return Optional.of(LoginResponseVo.builder()
+                    .userId(user.getId())
+                    .username(user.getUsername())
+                    .nickname(user.getNickname())
+                    .expiresAt(Timestamp.from(Instant.now().plusMillis(jwtConfig.getAccessTokenExpiration())))
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .refreshExpiresAt(Timestamp.from(Instant.now().plusMillis(jwtConfig.getRefreshTokenExpiration())))
+                    .email(user.getEmail())
+                    .build());
         } catch (Exception e) {
             System.out.println(e);
             throw new BlogBaseException(ErrorCode.USER_LOGIN_FAILED);
         }
-        return Optional.empty();
     }
 
     //验证JWT token格式
@@ -156,4 +161,6 @@ public class UserServiceImpl implements UserService {
         System.out.println("Generated JWT token: " + token);
         return token;
     }
+
+
 }
