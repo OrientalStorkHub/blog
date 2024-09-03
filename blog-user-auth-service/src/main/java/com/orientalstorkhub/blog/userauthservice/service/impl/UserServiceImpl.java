@@ -147,7 +147,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    //生成JWT token
+    /**
+     * 生成jwt token
+     * @param userId 用户id
+     * @param expiration JWT有效时长
+     * @return
+     */
     private String generateJwtToken(Integer userId, long expiration) {
         long currentTime = System.currentTimeMillis();
         long expireTime = currentTime + expiration;
@@ -158,7 +163,6 @@ public class UserServiceImpl implements UserService {
         claims.put("exp", expireTime);
         
         String token = JWTUtil.createToken(claims, jwtConfig.getSecretKey().getBytes());
-        System.out.println("Generated JWT token: " + token);
         return token;
     }
 

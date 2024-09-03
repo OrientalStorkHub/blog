@@ -1,6 +1,8 @@
 server:
   port: 10000
 
+
+
 spring:
   application:
     name: blog-gateway-service
@@ -16,15 +18,15 @@ spring:
         - id: user-auth-service
           uri: lb://blog-user-auth-service
           predicates:
-            - Path=/auth/**, /user-auth-service/v3/api-docs
+            - Path=/api/auth/**, /api/user-auth-service/v3/api-docs
           filters:
-            - StripPrefix=1
+            - StripPrefix=2
         - id: content-service
           uri: lb://blog-content-service
           predicates:
-            - Path=/content/**, /content-service/v3/api-docs
+            - Path=/api/content/**, /api/content-service/v3/api-docs
           filters:
-            - StripPrefix=1
+            - StripPrefix=2
         - id: file-media-service
           uri: lb://blog-file-media-service
           predicates:

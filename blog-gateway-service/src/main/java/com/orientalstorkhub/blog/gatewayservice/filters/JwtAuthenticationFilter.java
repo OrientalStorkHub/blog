@@ -79,6 +79,11 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         }
         // 验证JWT
         if (JWTUtil.verify(accessToken, secretKey.getBytes()) && !isTokenExpired(accessToken)) {
+            // 从access-token中获取用户Id
+            JWT jwt = JWTUtil.parseToken(accessToken);
+            String userId = jwt.getPayload("uid").toString();
+            // 将用户Id存到请求头中
+            exchange.getRequest().mutate().headers(headers -> headers.add("UserId", userId));
             // 检查token是否快过期
             if (isTokenNearExpiration(accessToken)) {
                 // 访问令牌即将过期，尝试使用刷新令牌

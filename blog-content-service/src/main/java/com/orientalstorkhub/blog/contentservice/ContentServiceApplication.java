@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan(basePackages = {"com.orientalstorkhub.blog"})
+@ComponentScan(basePackages = {"com.orientalstorkhub.blog", "com.orientalstorkhub.blog.common"})
 public class ContentServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(ContentServiceApplication.class, args);

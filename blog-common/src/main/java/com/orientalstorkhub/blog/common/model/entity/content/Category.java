@@ -25,6 +25,4 @@ public class Category {
     private Integer status;
 
 
-
-
 }
