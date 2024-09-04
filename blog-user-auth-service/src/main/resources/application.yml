@@ -20,8 +20,8 @@ spring:
     database: 0
 
 jwt:
-  access-token-expiration: 900000
-  refresh-token-expiration: 9000000
+  access-token-expiration: 1800000
+  refresh-token-expiration: 18000000
   secret-key: fjeiowh833f3c292s
 
 

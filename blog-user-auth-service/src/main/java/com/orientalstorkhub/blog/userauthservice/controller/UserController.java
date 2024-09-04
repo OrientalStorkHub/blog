@@ -1,14 +1,12 @@
 package com.orientalstorkhub.blog.userauthservice.controller;
 
-import com.orientalstorkhub.blog.common.model.vo.user.LoginResponseVo;
-import com.orientalstorkhub.blog.common.model.vo.user.UserLoginVo;
-import com.orientalstorkhub.blog.common.model.vo.user.UserRegisterVO;
+import com.orientalstorkhub.blog.common.pojo.vo.user.LoginResponseVo;
+import com.orientalstorkhub.blog.common.pojo.vo.user.UserLoginVo;
+import com.orientalstorkhub.blog.common.pojo.vo.user.UserRegisterVO;
 import com.orientalstorkhub.blog.common.responses.BaseResponse;
 import com.orientalstorkhub.blog.userauthservice.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;

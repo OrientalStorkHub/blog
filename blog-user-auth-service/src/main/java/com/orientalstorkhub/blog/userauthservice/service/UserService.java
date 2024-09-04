@@ -1,8 +1,8 @@
 package com.orientalstorkhub.blog.userauthservice.service;
 
-import com.orientalstorkhub.blog.common.model.vo.user.LoginResponseVo;
-import com.orientalstorkhub.blog.common.model.vo.user.UserLoginVo;
-import com.orientalstorkhub.blog.common.model.vo.user.UserRegisterVO;
+import com.orientalstorkhub.blog.common.pojo.vo.user.LoginResponseVo;
+import com.orientalstorkhub.blog.common.pojo.vo.user.UserLoginVo;
+import com.orientalstorkhub.blog.common.pojo.vo.user.UserRegisterVO;
 
 
 import java.util.Optional;

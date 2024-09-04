@@ -9,9 +9,9 @@ import java.util.Optional;
 
 import cn.hutool.jwt.JWTUtil;
 import com.orientalstorkhub.blog.common.config.JwtConfig;
-import com.orientalstorkhub.blog.common.model.entity.auth.User;
-import com.orientalstorkhub.blog.common.model.vo.user.LoginResponseVo;
-import com.orientalstorkhub.blog.common.model.vo.user.UserLoginVo;
+import com.orientalstorkhub.blog.common.pojo.entity.auth.User;
+import com.orientalstorkhub.blog.common.pojo.vo.user.LoginResponseVo;
+import com.orientalstorkhub.blog.common.pojo.vo.user.UserLoginVo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import com.orientalstorkhub.blog.common.constants.ErrorCode;
 import com.orientalstorkhub.blog.common.constants.UserType;
 import com.orientalstorkhub.blog.common.exception.BlogBaseException;
-import com.orientalstorkhub.blog.common.model.vo.user.UserRegisterVO;
+import com.orientalstorkhub.blog.common.pojo.vo.user.UserRegisterVO;
 import com.orientalstorkhub.blog.common.utils.PWDUtil;
 import com.orientalstorkhub.blog.userauthservice.repository.UserMapper;
 import com.orientalstorkhub.blog.userauthservice.service.UserService;
@@ -92,8 +92,8 @@ public class UserServiceImpl implements UserService {
                 return Optional.empty(); // 直接返回空
             }
             // 生成accessToken和refreshToken
-            String accessToken = generateJwtToken(user.getId(), jwtConfig.getRefreshTokenExpiration());
-            String refreshToken = generateJwtToken(user.getId(), jwtConfig.getAccessTokenExpiration());
+            String accessToken = generateJwtToken(user.getId(), jwtConfig.getAccessTokenExpiration());
+            String refreshToken = generateJwtToken(user.getId(), jwtConfig.getRefreshTokenExpiration());
             
             if (!isValidJwtFormat(accessToken) || !isValidJwtFormat(refreshToken)) {
                 throw new IllegalStateException("Generated JWT token is not in valid format");
