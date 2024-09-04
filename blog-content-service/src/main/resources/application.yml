@@ -5,5 +5,15 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848  # Nacos 服务地址
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/blog_content_service?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: blog_user1
+    password: MySecureP@ss1
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    database: 0
 server:
   port: 10012
