@@ -1,4 +1,4 @@
-package com.orientalstorkhub.blog.common.model.vo.user;
+package com.orientalstorkhub.blog.common.pojo.vo.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

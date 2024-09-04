@@ -1,4 +1,4 @@
-package com.orientalstorkhub.blog.common.model.entity.auth;
+package com.orientalstorkhub.blog.common.pojo.entity.auth;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

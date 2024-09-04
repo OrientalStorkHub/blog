@@ -1,6 +1,11 @@
 package com.orientalstorkhub.blog.common.constants;
 
-
+/**
+* Enum for defining user types within the system.
+* 
+* @author zhangj
+* @since 2024-09-03 14:28:18
+*/
 
 public enum UserType {
     ADMIN("admin", 1), // 枚举常量定义
