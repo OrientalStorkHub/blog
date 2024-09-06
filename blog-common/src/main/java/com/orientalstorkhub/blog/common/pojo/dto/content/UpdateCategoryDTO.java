@@ -17,7 +17,7 @@ import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
 public class UpdateCategoryDTO {
 
     @Schema(description = "分类id",requiredMode = REQUIRED )
-    private Integer categoryId;
+    private Integer id;
 
     @Schema(description = "新的分类名",requiredMode = REQUIRED )
     private String name;
