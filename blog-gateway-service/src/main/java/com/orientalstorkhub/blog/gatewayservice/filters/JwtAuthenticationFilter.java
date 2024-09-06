@@ -85,16 +85,20 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             // 将用户Id存到请求头中
             exchange.getRequest().mutate().headers(headers -> headers.add("UserId", userId));
             // 检查token是否快过期
-            if (isTokenNearExpiration(accessToken)) {
-                // 访问令牌即将过期，尝试使用刷新令牌
-                if (StringUtils.hasText(refreshToken) && JWTUtil.verify(refreshToken, secretKey.getBytes()) && !isTokenExpired(refreshToken)) {
-                    String[] newTokens = refreshTokens(refreshToken);
-                    exchange.getResponse().getHeaders().add("New-Access-Token", newTokens[0]);
-                    exchange.getResponse().getHeaders().add("New-Refresh-Token", newTokens[1]);
-                }
-            }
+//            if (isTokenNearExpiration(accessToken)) {
+//                // 访问令牌即将过期，尝试使用刷新令牌
+//                if (StringUtils.hasText(refreshToken) && JWTUtil.verify(refreshToken, secretKey.getBytes()) && !isTokenExpired(refreshToken)) {
+//                    String[] newTokens = refreshTokens(refreshToken);
+//                    exchange.getResponse().getHeaders().add("New-Access-Token", newTokens[0]);
+//                    exchange.getResponse().getHeaders().add("New-Refresh-Token", newTokens[1]);
+//                }
+//            }
             return chain.filter(exchange);
         } else if (StringUtils.hasText(refreshToken) && JWTUtil.verify(refreshToken, secretKey.getBytes()) && !isTokenExpired(refreshToken)) {
+            JWT jwt = JWTUtil.parseToken(refreshToken);
+            String userId = jwt.getPayload("uid").toString();
+            // 将用户Id存到请求头中
+            exchange.getRequest().mutate().headers(headers -> headers.add("UserId", userId));
             // 访问令牌已过期，但刷新令牌有效
             String[] newTokens = refreshTokens(refreshToken);
             exchange.getResponse().getHeaders().add("New-Access-Token", newTokens[0]);
