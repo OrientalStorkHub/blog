@@ -74,6 +74,6 @@ knife4j:
 
 jwt:
   secret-key: fjeiowh833f3c292s
-  access-token-expiration: 900000
-  refresh-token-expiration: 9000000  
+  access-token-expiration: 1800000
+  refresh-token-expiration: 18000000  
   refresh-threshold: 300000
