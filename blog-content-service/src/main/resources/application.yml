@@ -17,3 +17,8 @@ spring:
     database: 0
 server:
   port: 10012
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
