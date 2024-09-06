@@ -20,6 +20,12 @@ public class GlobalExceptionHandler  {
         return response;
     }
 
+    @ExceptionHandler(DAEOException.class)
+    public BaseResponse<Object> handleDAEOException(DAEOException e) {
+        BaseResponse<Object> response = new BaseResponse<>(e.getErrorCode(), e.getErrorMessage(), null);
+        System.out.print(e.getErrorMessage());
+        return response;
+    }
 
     public BaseResponse<Object> handleException(Exception e) {
         // 日志记录异常信息

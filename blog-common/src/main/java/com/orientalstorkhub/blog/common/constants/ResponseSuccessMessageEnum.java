@@ -10,7 +10,12 @@ public enum ResponseSuccessMessageEnum {
     CATEGORY_INSERT_SUCCESS("分类插入成功"),
     CATEGORY_SELECT_SUCCESS("分类查询成功"),
     CATEGORY_DELETE_SUCCESS("分类删除成功"),
-    CATEGORY_UPDATE_SUCCESS("分类更新成功");
+    CATEGORY_UPDATE_SUCCESS("分类更新成功"),
+    TAG_INSERT_SUCCESS("标签插入成功"),
+    TAG_SELECT_SUCCESS("标签查询成功"),
+    TAG_DELETE_SUCCESS("标签删除成功"),
+    TAG_UPDATE_SUCCESS("标签更新成功");
+
 
     private final String message;
 

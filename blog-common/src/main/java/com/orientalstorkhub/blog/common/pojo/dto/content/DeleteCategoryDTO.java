@@ -5,11 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.redis.core.index.PathBasedRedisIndexDefinition;
 
 import java.util.List;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
+
+
 
 @Data
 @AllArgsConstructor

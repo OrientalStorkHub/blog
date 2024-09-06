@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Schema(description = "分类插入")
 public class InsertCategoryDTO {
-
+    
     @Schema(description = "分类名", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
