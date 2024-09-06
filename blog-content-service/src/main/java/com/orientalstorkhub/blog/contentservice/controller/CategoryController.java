@@ -5,7 +5,7 @@ import com.orientalstorkhub.blog.common.pojo.dto.content.InsertCategoryDTO;
 import com.orientalstorkhub.blog.common.pojo.dto.content.UpdateCategoryDTO;
 import com.orientalstorkhub.blog.common.pojo.entity.content.Category;
 import com.orientalstorkhub.blog.common.pojo.vo.PageResponseVO;
-import com.orientalstorkhub.blog.common.pojo.dto.content.CategoryQueryDTO;
+import com.orientalstorkhub.blog.common.pojo.dto.content.QueryCategoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +15,6 @@ import com.orientalstorkhub.blog.common.responses.BaseResponse;
 import com.orientalstorkhub.blog.common.utils.ResponseUtil;
 import com.orientalstorkhub.blog.contentservice.service.CategoryService;
 
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.orientalstorkhub.blog.common.constants.ResponseSuccessMessageEnum.*;
 
@@ -43,7 +40,7 @@ public class CategoryController {
     }
 
     @PostMapping("/listPage")
-    public BaseResponse<PageResponseVO<Category>> selectCategoriesPage(@RequestBody CategoryQueryDTO dto) {
+    public BaseResponse<PageResponseVO<Category>> selectCategoriesPage(@RequestBody QueryCategoryDTO dto) {
         PageResponseVO<Category> categoryPageResponseVO = categoryService.selectCategoriesPage(dto);
         return ResponseUtil.success(CATEGORY_SELECT_SUCCESS, categoryPageResponseVO);
     }

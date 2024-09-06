@@ -3,13 +3,12 @@ package com.orientalstorkhub.blog.contentservice.service.impl;
 import java.time.Instant;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.orientalstorkhub.blog.common.context.UserContext;
 import com.orientalstorkhub.blog.common.pojo.vo.PageResponseVO;
-import com.orientalstorkhub.blog.common.pojo.dto.content.CategoryQueryDTO;
+import com.orientalstorkhub.blog.common.pojo.dto.content.QueryCategoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.orientalstorkhub.blog.common.constants.CategoryStatusEnum;
 import com.orientalstorkhub.blog.common.constants.ErrorCode;
 import com.orientalstorkhub.blog.common.exception.BlogBaseException;
+import com.orientalstorkhub.blog.common.exception.DAEOException;
 import com.orientalstorkhub.blog.common.pojo.entity.content.Category;
 import com.orientalstorkhub.blog.contentservice.repository.CategoryMapper;
 import com.orientalstorkhub.blog.contentservice.service.CategoryService;
@@ -31,12 +31,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategoryByIds(List<Integer> categoryIds) {
-        // 构建更新后的分类对象列表
-        int result = categoryMapper.updateCategoriesStatusByIds(CategoryStatusEnum.INACTIVE.getStatus(),
-                Timestamp.from(Instant.now()), categoryIds);
-        if (result < categoryIds.size()) {
-            throw new BlogBaseException(ErrorCode.CONTENT_SERVICE_CATEGORY_DELETE_FAILED);
-        }
+        
+        try {
+            // 构建更新后的分类对象列表
+            int result = categoryMapper.updateCategoriesStatusByIds(CategoryStatusEnum.INACTIVE.getStatus(),
+                    Timestamp.from(Instant.now()), categoryIds);
+            if (result < categoryIds.size()) {
+                throw new BlogBaseException(ErrorCode.CONTENT_SERVICE_CATEGORY_DELETE_FAILED);
+            }
+        } catch (Exception e) {
+            throw new DAEOException(ErrorCode.DATABASE_OPERATION_EXCEPTION);
+        }   
     }
 
     @Override
@@ -54,15 +59,20 @@ public class CategoryServiceImpl implements CategoryService {
         //插入分类名
         category.setCreatedAt(Timestamp.from(Instant.now()));
         category.setUpdatedAt(Timestamp.from(Instant.now()));
-        category.setStatus(CategoryStatusEnum.ACTIVE.getStatus());        
-        int result = categoryMapper.insert(category);
-        if (result < 1) {
-            throw new BlogBaseException(ErrorCode.CONTENT_SERVICE_CATEGORY_INSERT_FAILED);
-        }
+        category.setStatus(CategoryStatusEnum.ACTIVE.getStatus());  
+        try {
+            int result = categoryMapper.insert(category);
+            if (result < 1) {
+                throw new BlogBaseException(ErrorCode.CONTENT_SERVICE_CATEGORY_INSERT_FAILED);
+            }
+        } catch (Exception e) {
+            throw new DAEOException(ErrorCode.DATABASE_OPERATION_EXCEPTION);
+        }      
+      
     }
 
     @Override
-    public PageResponseVO<Category> selectCategoriesPage(CategoryQueryDTO dto) {
+    public PageResponseVO<Category> selectCategoriesPage(QueryCategoryDTO dto) {
         //创建查询条件
         Integer userId = UserContext.getUserId();
         QueryWrapper<Category> queryWrapper = new QueryWrapper<>();
@@ -74,9 +84,9 @@ public class CategoryServiceImpl implements CategoryService {
         }
         // 分页查询
         IPage<Category> pageObject = new Page<>(dto.getCurrentPage(), dto.getPageSize());
-        categoryMapper.selectPage(pageObject, queryWrapper);
-        long count = pageObject.getTotal();
-        long totalPages = pageObject.getPages();
+        IPage<Category> resultPage = categoryMapper.selectPage(pageObject, queryWrapper);
+        long count = resultPage.getTotal();
+        long totalPages = resultPage.getPages();
 
         // 构建分页响应对象
         PageResponseVO<Category> pageResponseVO = PageResponseVO.<Category>builder()
@@ -92,19 +102,26 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public void updateCategory(Integer id, String newName, Integer userId) {
+    public void updateCategory(Integer id, String newName, Integer userId) { 
         //判断新分类名是否重复
-        Category category = Category.builder().createdBy(userId).name(newName).build();
+        Category category = Category.builder().createdBy(userId).name(newName)
+                .status(CategoryStatusEnum.ACTIVE.getStatus()).build();
         Long count = categoryMapper.selectCount(new QueryWrapper<>(category));
         if (count > 0) {
             throw new BlogBaseException(ErrorCode.CONTENT_SERVICE_CATEGORY_EXISTS);
         }
+        category.setId(id);
         category.setName(newName);
         category.setUpdatedAt(Timestamp.from(Instant.now()));
-        int result = categoryMapper.updateById(category);
-        if (result < 1) {
-            throw new BlogBaseException(ErrorCode.CONTENT_SERVICE_CATEGORY_UPDATE_FAILED);
+        try {
+            int result = categoryMapper.updateById(category);
+            if (result < 1) {
+                throw new BlogBaseException(ErrorCode.CONTENT_SERVICE_CATEGORY_UPDATE_FAILED);
+            }
+        } catch (Exception e) {
+            throw new DAEOException(ErrorCode.DATABASE_OPERATION_EXCEPTION);
         }
+
     }
 
 

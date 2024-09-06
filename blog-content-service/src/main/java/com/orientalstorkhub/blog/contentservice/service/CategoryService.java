@@ -2,7 +2,7 @@ package com.orientalstorkhub.blog.contentservice.service;
 
 import com.orientalstorkhub.blog.common.pojo.entity.content.Category;
 import com.orientalstorkhub.blog.common.pojo.vo.PageResponseVO;
-import com.orientalstorkhub.blog.common.pojo.dto.content.CategoryQueryDTO;
+import com.orientalstorkhub.blog.common.pojo.dto.content.QueryCategoryDTO;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public interface CategoryService {
      * @param vo 查询请求对象，包含用户ID、页码和每页大小等信息
      * @return 分类列表的分页响应对象
      */
-    PageResponseVO<Category> selectCategoriesPage(CategoryQueryDTO vo);
+    PageResponseVO<Category> selectCategoriesPage(QueryCategoryDTO vo);
 
 
     void updateCategory(Integer id, String newName, Integer userId);
