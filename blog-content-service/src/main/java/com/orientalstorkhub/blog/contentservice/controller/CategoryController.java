@@ -56,7 +56,7 @@ public class CategoryController {
     @PostMapping("/update")
     public BaseResponse<Object> updateCategory(@RequestBody UpdateCategoryDTO dto) {
         Integer userId = UserContext.getUserId();
-        categoryService.updateCategory(dto.getCategoryId(), dto.getName(), userId);
+        categoryService.updateCategory(dto.getId(), dto.getName(), userId);
         return ResponseUtil.success(CATEGORY_UPDATE_SUCCESS);
     }
 

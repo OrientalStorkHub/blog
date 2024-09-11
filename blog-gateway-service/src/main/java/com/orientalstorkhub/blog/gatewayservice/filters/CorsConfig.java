@@ -22,6 +22,9 @@ public class CorsConfig {
                 "Content-Type", "access-token", "refresh-token"));
         corsConfig.setMaxAge(3600L);
 
+        // 添加自定义响应头
+        corsConfig.setExposedHeaders(Arrays.asList("New-Access-Token", "New-Refresh-Token"));
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
 
