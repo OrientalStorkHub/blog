@@ -1,6 +1,6 @@
 package com.orientalstorkhub.blog.userauthservice.service;
 
-import com.orientalstorkhub.blog.common.pojo.entity.auth.User;
+import com.orientalstorkhub.blog.common.pojo.dto.content.UserDto;
 import com.orientalstorkhub.blog.common.pojo.vo.user.LoginResponseVo;
 import com.orientalstorkhub.blog.common.pojo.vo.user.UserLoginVo;
 import com.orientalstorkhub.blog.common.pojo.vo.user.UserRegisterVO;
@@ -31,5 +31,5 @@ public interface UserService {
    */
   void logout(String accessToken);
 
-  void updateUserInfo(User user);
+  void updateUserInfo(UserDto user);
 }

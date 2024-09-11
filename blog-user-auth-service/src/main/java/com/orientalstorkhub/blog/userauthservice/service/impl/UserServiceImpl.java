@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import cn.hutool.jwt.JWTUtil;
 import com.orientalstorkhub.blog.common.config.JwtConfig;
+import com.orientalstorkhub.blog.common.pojo.dto.content.UserDto;
 import com.orientalstorkhub.blog.common.pojo.entity.auth.User;
 import com.orientalstorkhub.blog.common.pojo.vo.user.LoginResponseVo;
 import com.orientalstorkhub.blog.common.pojo.vo.user.UserLoginVo;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.orientalstorkhub.blog.common.constants.ErrorCode;
 import com.orientalstorkhub.blog.common.constants.UserType;
+import com.orientalstorkhub.blog.common.context.UserContext;
 import com.orientalstorkhub.blog.common.exception.BlogBaseException;
 import com.orientalstorkhub.blog.common.pojo.vo.user.UserRegisterVO;
 import com.orientalstorkhub.blog.common.utils.PWDUtil;
@@ -165,10 +167,10 @@ public class UserServiceImpl implements UserService {
    * 修改用户信息
    */
   @Override
-  public void updateUserInfo(User user) {
-    Integer id = user.getId();
-    User userEntity = userMapper.selectById(id);
-    userEntity.setNickname(user.getNickname());
+  public void updateUserInfo(UserDto user) {
+    Integer userId = UserContext.getUserId();
+    User userEntity = userMapper.selectById(userId);
+    userEntity.setNickname(user.getNickName());
     userMapper.updateById(userEntity);
   }
 

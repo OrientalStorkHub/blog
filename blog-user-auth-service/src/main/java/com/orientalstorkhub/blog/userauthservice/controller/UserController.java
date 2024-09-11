@@ -1,5 +1,6 @@
 package com.orientalstorkhub.blog.userauthservice.controller;
 
+import com.orientalstorkhub.blog.common.pojo.dto.content.UserDto;
 import com.orientalstorkhub.blog.common.pojo.entity.auth.User;
 import com.orientalstorkhub.blog.common.pojo.vo.user.LoginResponseVo;
 import com.orientalstorkhub.blog.common.pojo.vo.user.UserLoginVo;
@@ -88,7 +89,7 @@ public class UserController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "修改成功")
   })
-  public BaseResponse<Object> updateUserInfo(@RequestBody User user) {
+  public BaseResponse<Object> updateUserInfo(@RequestBody UserDto user) {
     userService.updateUserInfo(user);
     return new BaseResponse<>(200, "修改成功", null);
   }
